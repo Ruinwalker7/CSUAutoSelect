@@ -20,11 +20,13 @@ Img_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/verifycode.servlet'
 LOGIN_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xk/LoginToXk'
 MAIN_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/framework/xsMain.jsp'
 
-# REQUEST_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/ggxxkxkOper'
-REQUEST_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper'
+# REQUEST_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/ggxxkxkOper' #公选
+REQUEST_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper' #体育和专业课
 
 session = requests.Session()
 respond = session.get(Img_URL)
+
+semester = item['time']
 
 with open('code.jpg', 'wb') as file:
 	file.write(respond.content)
@@ -54,13 +56,22 @@ if respond.status_code != requests.codes.ok:
 else:
 	print('成功登录教务系统')
 
-num = int(item['num'])
+num1 = int(item['num1'])
+num2 = int(item['num2'])
 
-list = []
+list1 = []
+class_url = []
 
-for i in range(1, num + 1):
+for i in range(1, num1 + 1):
 	id = item['id' + str(i)]
-	list.append('202220232' + id)
+	list1.append(semester + id)
+	class_url.append('http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/ggxxkxkOper'+ '?jx0404id='+semester + id+'&xkzy=&trjf=')
+
+
+for i in range(1, num2 +1):
+	id = item['id_' + str(i)]
+	list1.append(semester + id)
+	class_url.append('http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper'+ '?jx0404id='+semester + id+'&xkzy=&trjf=')
 
 while True:
 	respond = session.get('http://csujwc.its.csu.edu.cn/jsxsd/xsxk/xklc_list')
@@ -75,23 +86,32 @@ respond = session.get('http://csujwc.its.csu.edu.cn' + key[0])
 print('成功进入选课页面')
 
 
-def work(id, num):
-	# print(REQUEST_URL + '?jx0404id=' + id +'&xkzy=&trjf=')
-	respond = session.get(REQUEST_URL + '?jx0404id=' + id +'&xkzy=&trjf=')
+def work(url, num):
+	# print(url)
+	respond = session.get(url)
 	if re.search('true', respond.text):
-		print("成功抢到第 %d 门课", i)
+		print("成功抢到第 {} 门课".format(num))
+		class_url.remove(i)
+		return True
+	if re.search('冲突', respond.text):
+		print(re.search('"选课失败：(.+)"', respond.text))
+		print("课程冲突，已暂停该课程选课")
 		return True
 	if re.search('null', respond.text):
 		print("没有该 ID 所对应的课程")
+		return False
 	else:
 		print(re.search('"选课失败：(.+)"', respond.text))
-	return True
+	return False
 
 
 while True:
-	for i in range(0, num):
-		print('第 {} 门课选课开始，课程 ID: {}'.format(i + 1, list[i]))
-		work(list[i], i)
+	index=0
+	for i in class_url:
+		print('选课开始，课程 ID: {}'.format(list1[index]))
+		if work(i, index+1):
+			list1.remove(list1[index])
+		index+=1
 		time.sleep(1)
 
 input('输入回车以结束程序')
