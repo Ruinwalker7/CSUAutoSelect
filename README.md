@@ -27,18 +27,22 @@ $ pip3 install requests
 
 ## 运行
 
-首先修改`config.ini`，抢几节课输入几个ID
+首先修改`config.ini`，根据config中内容修改账号密码，以及填写要抢课的ID，下面展示了如何找到课程ID
 
-进入项目根目录，命令行中运行
+
+按照提示输入学号，教务系统密码，课程 ID 后，进入项目根目录，命令行中运行
 ```console
 $ python3 autoselect.py
 ```
 
-会在根目录生成`code.jpg`，请人工识别二维码内容
+会在根目录生成`code.jpg`，请**人工识别二维码内容**，并输入
 
-按照提示输入学号，教务系统密码，课程 ID 后即可开始自动选课
+之后会自动检测是否开始选课
 
-1. 课程 ID 查找方法：在 [中南大学教务系统课表查询页面](http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_frm.jsp?isview=1) 中点击「按教师」按钮，输入学年学期、教师名称后点击「查询」，格子中央的 6 位数字编号即为课程 ID，这样可以找到公选和体育的ID、
+## 如何找到6位课程ID
+
+
+1. 课程 ID 查找方法：在 [中南大学教务系统课表查询页面](http://csujwc.its.csu.edu.cn/jiaowu/pkgl/llsykb/llsykb_find_jg0101.jsp?xnxq01id=2022-2023-2&init=1&isview=0) 中点击「按教师」按钮，输入学年学期、教师名称后点击「查询」，格子中央的 6 位数字编号即为课程 ID，这样可以找到公选和体育的ID、
 
    ![课程 ID.png](https://i.loli.net/2021/01/13/G7mN9BUzpaHRtkw.png)
 
@@ -47,6 +51,8 @@ $ python3 autoselect.py
 ## 声明
 
 因为每学期选课的包可能都会发生变化，当前代码仅能在上传时的学期抢课，不保证抢课成功
+
+该程序仅保存账户密码在本地，不会危害到你的账户安全
 
 ## 许可协议
 

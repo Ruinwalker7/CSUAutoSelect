@@ -21,7 +21,7 @@ LOGIN_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xk/LoginToXk'
 MAIN_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/framework/xsMain.jsp'
 
 # REQUEST_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/ggxxkxkOper' #公选
-REQUEST_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper' #体育和专业课
+# REQUEST_URL = 'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper' #体育和专业课
 
 session = requests.Session()
 respond = session.get(Img_URL)
@@ -79,7 +79,7 @@ while True:
 	if len(key) >= 1:
 		break
 	print('寻找选课列表中')
-	time.sleep(1)
+	time.sleep(0.4)
 
 respond = session.get('http://csujwc.its.csu.edu.cn' + key[0])
 
