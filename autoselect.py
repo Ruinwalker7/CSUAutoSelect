@@ -6,6 +6,7 @@ import time
 import requests
 import base64
 import configparser
+from copy import deepcopy
 
 file = 'config.ini'
 con = configparser.ConfigParser()
@@ -41,12 +42,11 @@ def login():
 	password = item['password']
 	s1 = base64.b64encode(username.encode())
 	s2 = base64.b64encode(password.encode())
-	
+
 	data = {'encoded': s1.decode() + '%%%' + s2.decode(), 'RANDOMCODE': qrcode}
 	respond = session.post(LOGIN_URL, data)
 	respond = session.get(MAIN_URL)
 	return respond
-
 
 respond = login()
 
@@ -65,13 +65,14 @@ class_url = []
 for i in range(1, num1 + 1):
 	id = item['id' + str(i)]
 	list1.append(semester + id)
-	class_url.append('http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/ggxxkxkOper'+ '?jx0404id='+semester + id+'&xkzy=&trjf=')
+	class_url.append(
+		'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/ggxxkxkOper' + '?jx0404id=' + semester + id + '&xkzy=&trjf=')
 
-
-for i in range(1, num2 +1):
+for i in range(1, num2 + 1):
 	id = item['id_' + str(i)]
 	list1.append(semester + id)
-	class_url.append('http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper'+ '?jx0404id='+semester + id+'&xkzy=&trjf=')
+	class_url.append(
+		'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper' + '?jx0404id=' + semester + id + '&xkzy=&trjf=')
 
 while True:
 	respond = session.get('http://csujwc.its.csu.edu.cn/jsxsd/xsxk/xklc_list')
@@ -87,11 +88,10 @@ print('成功进入选课页面')
 
 
 def work(url, num):
-	# print(url)
 	respond = session.get(url)
 	if re.search('true', respond.text):
 		print("成功抢到第 {} 门课".format(num))
-		class_url.remove(i)
+		class_url_clone.remove(i)
 		return True
 	if re.search('冲突', respond.text):
 		print(re.search('"选课失败：(.+)"', respond.text))
@@ -106,12 +106,15 @@ def work(url, num):
 
 
 while True:
-	index=0
+	index = 0
+	class_url_clone = deepcopy(class_url)
 	for i in class_url:
 		print('选课开始，课程 ID: {}'.format(list1[index]))
-		if work(i, index+1):
+		if work(i, index + 1):
 			list1.remove(list1[index])
-		index+=1
+		index += 1
 		time.sleep(1)
-
-input('输入回车以结束程序')
+	class_url = class_url_clone
+	if len(class_url) == 0:
+		print('课程已选择完成，程序退出')
+		break
