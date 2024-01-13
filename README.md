@@ -6,8 +6,8 @@
 
 主要修改内容：
 
-- 可以进行二维码选择
-- 可以进行多个课程的抢课
+- 可以进行二维码输入
+- 可以同时进行多个课程的抢课
 
 ## 安装
 ### Python3
@@ -18,16 +18,15 @@
 
 对于 git 命令行：
 ```console
-$ git clone https://github.com/CrazyDaveHDY/CSUAutoSelect.git
+git clone https://github.com/Ruinwalker7/CSUAutoSelect.git
 ```
 
-软件运行需要python包requests
+### requests模块安装
 
-### requests模块
+软件运行需要python包requests，在命令行中使用pip安装运行：
 
-在命令行中运行：
 ```console
-$ pip3 install requests
+pip3 install requests
 ```
 
 ## 运行
@@ -37,14 +36,14 @@ $ pip3 install requests
 
 按照提示输入学号，教务系统密码，课程 ID 后，进入项目根目录，命令行中运行
 ```console
-$ python3 autoselect.py
+python3 autoselect.py
 ```
 
 会在根目录(autoselect.py所在文件夹)生成`code.jpg`，请**人工识别二维码内容**，并输入
 
 之后会自动检测是否开始选课，如果选课还没有开始，将会是下图的输出：
 
-<img src="assets/image-20230711014740394.png" alt="image-20230711014740394" style="zoom: 67%;" />
+<img src="./assets/image-20230711014740394.png" alt="image-20230711014740394" style="zoom: 67%;" />
 
 ## 如何找到6位课程ID
 
@@ -55,7 +54,7 @@ $ python3 autoselect.py
 
 2. 在查询页面按照时间查询，里面课表都有开课编号
 
-<img src="assets/image-20230711015054530.png" alt="image-20230711015054530" style="zoom:80%;" />
+<img src="./assets/image-20230711015054530.png" alt="image-20230711015054530" style="zoom:80%;" />
 
 
 ## 声明

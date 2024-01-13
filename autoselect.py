@@ -7,6 +7,7 @@ import requests
 import base64
 import configparser
 from copy import deepcopy
+from datetime import datetime
 
 file = 'config.ini'
 con = configparser.ConfigParser()
@@ -36,7 +37,6 @@ with open('code.jpg', 'wb') as file:
 respond = session.get(LOGIN_URL)
 qrcode = input("输入验证码：")
 
-
 def login():
 	username = item['username']
 	password = item['password']
@@ -59,20 +59,30 @@ else:
 num1 = int(item['num1'])
 num2 = int(item['num2'])
 
-list1 = []
 class_url = []
 
 for i in range(1, num1 + 1):
 	id = item['id' + str(i)]
-	list1.append(semester + id)
 	class_url.append(
 		'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/ggxxkxkOper' + '?jx0404id=' + semester + id + '&xkzy=&trjf=')
 
 for i in range(1, num2 + 1):
 	id = item['id_' + str(i)]
-	list1.append(semester + id)
 	class_url.append(
 		'http://csujwc.its.csu.edu.cn/jsxsd/xsxkkc/bxqjhxkOper' + '?jx0404id=' + semester + id + '&xkzy=&trjf=')
+
+# 设置目标时间为2024年1月12日9点57分
+# target_time = datetime(2024, 1, 12, 9, 58)
+# while True:
+# 	# 获取当前时间
+# 	current_time = datetime.now()
+# 	# 判断当前时间是否大于目标时间
+# 	if current_time > target_time:
+# 		print("当前时间大于2024年1月12日9点58分")
+# 		break
+# 	else:
+# 		print("当前时间不大于2024年1月12日9点58分")
+# 		time.sleep(5)
 
 while True:
 	respond = session.get('http://csujwc.its.csu.edu.cn/jsxsd/xsxk/xklc_list')
@@ -80,41 +90,39 @@ while True:
 	if len(key) >= 1:
 		break
 	print('寻找选课列表中')
-	time.sleep(0.4)
+	time.sleep(0.5)
 
 respond = session.get('http://csujwc.its.csu.edu.cn' + key[0])
 
 print('成功进入选课页面')
-
-
-def work(url, num):
+num = 1
+def work(url):
 	respond = session.get(url)
 	if re.search('true', respond.text):
 		print("成功抢到第 {} 门课".format(num))
-		class_url_clone.remove(i)
+		num+=1
 		return True
 	if re.search('冲突', respond.text):
-		print(re.search('"选课失败：(.+)"', respond.text))
-		print("课程冲突，已暂停该课程选课")
+		print(re.search('"选课失败：(.+)"', respond.text).group())
+		print("课程冲突，已暂停该课程选课\n")
+		return True
+	if re.search('当前教学班已选择！', respond.text):
+		print(re.search('"选课失败：(.+)"', respond.text).group())
+		print("当前教学班已选择！\n")
 		return True
 	if re.search('null', respond.text):
-		print("没有该 ID 所对应的课程")
+		print("没有该 ID 所对应的课程\n")
 		return False
 	else:
-		print(re.search('"选课失败：(.+)"', respond.text))
+		print(re.search('"选课失败：(.+)"', respond.text).group())
+		print("\n")
 	return False
 
 
 while True:
-	index = 0
-	class_url_clone = deepcopy(class_url)
-	for i in class_url:
-		print('选课开始，课程 ID: {}'.format(list1[index]))
-		if work(i, index + 1):
-			list1.remove(list1[index])
-		index += 1
-		time.sleep(1)
-	class_url = class_url_clone
+	class_url = [url for url in class_url if not work(url)]
 	if len(class_url) == 0:
-		print('课程已选择完成，程序退出')
+		print('选课已完成，程序退出')
 		break
+	time.sleep(1)
+
