@@ -95,28 +95,31 @@ while True:
 respond = session.get('http://csujwc.its.csu.edu.cn' + key[0])
 
 print('成功进入选课页面')
-num = 1
+
 def work(url):
-	respond = session.get(url)
-	if re.search('true', respond.text):
-		print("成功抢到第 {} 门课".format(num))
-		num+=1
-		return True
-	if re.search('冲突', respond.text):
-		print(re.search('"选课失败：(.+)"', respond.text).group())
-		print("课程冲突，已暂停该课程选课\n")
-		return True
-	if re.search('当前教学班已选择！', respond.text):
-		print(re.search('"选课失败：(.+)"', respond.text).group())
-		print("当前教学班已选择！\n")
-		return True
-	if re.search('null', respond.text):
-		print("没有该 ID 所对应的课程\n")
+	try:
+		respond = session.get(url)
+		if re.search('true', respond.text):
+			print("成功抢课!")
+			return True
+		if re.search('冲突', respond.text):
+			print(re.search('"选课失败：(.+)"', respond.text).group())
+			print("课程冲突，已暂停该课程选课\n")
+			return True
+		if re.search('当前教学班已选择！', respond.text):
+			print(re.search('"选课失败：(.+)"', respond.text).group())
+			print("当前教学班已选择！\n")
+			return True
+		if re.search('null', respond.text):
+			print("没有该 ID 所对应的课程\n")
+			return False
+		else:
+			print(respond.text)
+			print("\n")
 		return False
-	else:
-		print(re.search('"选课失败：(.+)"', respond.text).group())
-		print("\n")
-	return False
+	except Exception as e:
+		print(f"发生错误: {e}")
+		return False  # 发生任何错误时，返回False
 
 
 while True:
